@@ -1,0 +1,30 @@
+@Entity
+public class Departamento {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String nome;
+    @OneToMany(mappedBy = "departamento")
+    private List<Funcionario> funcionarios;
+}
+
+@Entity
+public class Funcionario {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String matricula; 
+    private String nomeCompleto; 
+    
+    @ManyToOne
+    private Departamento departamento; 
+}
+
+@Entity
+public class RegistroPonto {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; 
+    
+    @ManyToOne
+    private Funcionario funcionario; 
+    
+    private LocalDateTime dataHora; 
+}
