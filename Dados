@@ -1,0 +1,43 @@
+@Component
+public class PontoRunner implements CommandLineRunner {
+
+    @Autowired private DepartamentoRepository deptoRepo;
+    @Autowired private FuncionarioRepository funcRepo;
+    @Autowired private RegistroPontoRepository pontoRepo;
+
+    @Override
+    public void run(String... args) {
+        Departamento dp = new Departamento();
+        dp.setNome("Gestão de Pessoas"); [cite: 34]
+        deptoRepo.save(dp);
+
+        Funcionario f = new Funcionario();
+        f.setNomeCompleto("James Gosling"); [cite: 33]
+        f.setDepartamento(dp);
+        funcRepo.save(f);
+
+        pontoRepo.save(new RegistroPonto(f, LocalDateTime.of(2026, 3, 10, 8, 2)));
+        pontoRepo.save(new RegistroPonto(f, LocalDateTime.of(2026, 3, 10, 12, 1)));
+        pontoRepo.save(new RegistroPonto(f, LocalDateTime.of(2026, 3, 10, 13, 5)));
+        pontoRepo.save(new RegistroPonto(f, LocalDateTime.of(2026, 3, 10, 17, 58)));
+
+        LocalDateTime inicio = LocalDateTime.of(2026, 3, 10, 0, 0);
+        LocalDateTime fim = LocalDateTime.of(2026, 3, 10, 23, 59);
+        List<RegistroPonto> pontos = pontoRepo.findByFuncionarioAndDataHoraBetweenOrderByDataHoraAsc(f, inicio, fim);
+
+        System.out.println("RELATÓRIO DE PONTO");
+        Duration total = Duration.ZERO;
+        
+        for (int i = 0; i < pontos.size(); i += 2) {
+            LocalDateTime entrada = pontos.get(i).getDataHora();
+            LocalDateTime saida = pontos.get(i+1).getDataHora();
+            Duration duracao = Duration.between(entrada, saida);
+            total = total.plus(duracao);
+            
+            System.out.printf("%s - %s | Horas: %02d:%02d\n", 
+                entrada.toLocalTime(), saida.toLocalTime(), 
+                duracao.toHours(), duracao.toMinutesPart()); [cite: 37]
+        }
+        System.out.println("Total trabalhado: " + total.toHours() + ":" + total.toMinutesPart()); [cite: 37]
+    }
+}
