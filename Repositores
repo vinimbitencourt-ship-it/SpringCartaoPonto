@@ -1,0 +1,9 @@
+public interface DepartamentoRepository extends JpaRepository<Departamento, Long> {}
+
+public interface FuncionarioRepository extends JpaRepository<Funcionario, Long> {}
+
+public interface RegistroPontoRepository extends JpaRepository<RegistroPonto, Long> {
+    
+    List<RegistroPonto> findByFuncionarioAndDataHoraBetweenOrderByDataHoraAsc(
+        Funcionario funcionario, LocalDateTime inicio, LocalDateTime fim);
+}
